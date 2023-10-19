@@ -1,0 +1,43 @@
+[gd_scene load_steps=8 format=3 uid="uid://o56swjkw2mym"]
+
+[ext_resource type="ArrayMesh" uid="uid://cp1laq3nc2ext" path="res://Models/Weapon/shotgun.obj" id="1_gais3"]
+[ext_resource type="Script" path="res://player.gd" id="1_pnj8u"]
+[ext_resource type="PackedScene" uid="uid://dxljhebm25lrg" path="res://Models/Weapon/fps_pistol_animated.glb" id="3_t5mf5"]
+[ext_resource type="PackedScene" uid="uid://2wv22mx7g31k" path="res://Models/Weapon/fps_pistol_animated.tscn" id="4_sc5oy"]
+[ext_resource type="AudioStream" uid="uid://dblqxe0jkd40q" path="res://Audio/pistolfire2.wav" id="5_ve15w"]
+[ext_resource type="AudioStream" uid="uid://25mm6a7sxaub" path="res://Audio/pistolReloadB.wav" id="6_1i6uw"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_kekq6"]
+
+[node name="Player" type="CharacterBody3D"]
+script = ExtResource("1_pnj8u")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1.46674, 0, 0, 0, 1.35639, 0, 0, 0, 2.12288, 0, -0.428111, 0)
+shape = SubResource("CapsuleShape3D_kekq6")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.08165e-12, 1.06614, 0.441086)
+current = true
+
+[node name="Shotgun" type="MeshInstance3D" parent="Camera3D"]
+transform = Transform3D(-15, 5.2318e-15, 2.26494e-06, 5.2318e-15, 15, -5.2318e-15, -2.26494e-06, -5.2318e-15, -15, 0.784262, -0.674926, -1.4166)
+visible = false
+mesh = ExtResource("1_gais3")
+skeleton = NodePath("../..")
+
+[node name="Muzzle" type="Node3D" parent="Camera3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.232579, -0.645078, -2.7893)
+
+[node name="fps_pistol_animated" parent="Camera3D" instance=ExtResource("3_t5mf5")]
+transform = Transform3D(-0.027281, 0, -0.000296176, 0, 0.0272826, 0, 0.000296176, 0, -0.027281, 0.245151, -1.06614, -1.62025)
+visible = false
+
+[node name="fps_pistol_animated2" parent="Camera3D" instance=ExtResource("4_sc5oy")]
+transform = Transform3D(-0.027281, 0, -0.000296176, 0, 0.0272826, 0, 0.000296176, 0, -0.027281, 0.245151, -1.06614, -1.62025)
+
+[node name="ShootSound" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("5_ve15w")
+
+[node name="ReloadSound" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("6_1i6uw")
