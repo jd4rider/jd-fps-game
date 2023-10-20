@@ -16,10 +16,22 @@ var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 
 var mouseDelta : Vector2 = Vector2()
 
+var isHidden : bool = false;
+
 @onready var camera : Camera3D = $Camera3D
 @onready var pistol_animation : AnimationPlayer = $Camera3D/fps_pistol_animated2/AnimationPlayer
+@onready var walk_animation : AnimationPlayer = $Camera3D/fps_pistol_animated2/AnimationPlayer
 @onready var shoot_sound : AudioStreamPlayer3D = $ShootSound
 @onready var reload_sound : AudioStreamPlayer3D = $ReloadSound
+@onready var reload_sound2 : AudioStreamPlayer3D = $ReloadSound2
+@onready var hide_sound : AudioStreamPlayer3D = $HideSound
+@onready var unhide_sound : AudioStreamPlayer3D = $UnhideSound
+
+var rng = RandomNumberGenerator.new()
+
+var reloading : bool = false
+var firing : bool = false
+var hiding : bool = false
 
 func _ready():
 	# Hide the mouse cursor when in the game
@@ -41,6 +53,9 @@ func _physics_process(delta: float) -> void:
 	var input_dir := Input.get_vector("strafe_left", "strafe_right", "forward", "backward")
 	var direction := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 	if direction:
+		if !walk_animation.is_playing() and !isHidden and !hiding:
+			walk_animation.play('ambient')
+			walk_animation.seek(5.9667, true)
 		velocity.x = direction.x * SPEED
 		velocity.z = direction.z * SPEED
 	else:
@@ -63,19 +78,59 @@ func _process(delta: float) -> void:
 	# reset the mouse delta vector
 	mouseDelta = Vector2()
 	
+	
+	
 	if Input.is_action_just_pressed("reload"):
-		if !pistol_animation.is_playing():
-			#pistol_animation.play("reload")
-			#pistol_animation.seek(0.3, true)
-			pistol_animation.play("reload2")
-			pistol_animation.seek(2.1667, true)
-			reload_sound.play()
+		if isHidden:
+			hide_animation()
+		elif !reloading and !firing:
+			rng.randomize()
+			var randNum = rng.randi_range(0,1)
+			reloading = true
+			if randNum == 0:
+				pistol_animation.play("reload")
+				pistol_animation.seek(0.3, true)
+				reload_sound.play()
+				
+			else:
+				pistol_animation.play("reload2")
+				pistol_animation.seek(2.1667, true)
+				reload_sound2.play()
+			await pistol_animation.animation_finished
+			reloading = false
+		isHidden = false
 	
 	if Input.is_action_just_pressed("shoot"):
-		if !pistol_animation.is_playing():
+		if isHidden:
+			hide_animation()
+		elif !firing and !reloading:
+			firing = true
 			pistol_animation.play("shoot")
 			pistol_animation.seek(7.5, true)
 			shoot_sound.play()
+			isHidden = false
+			await pistol_animation.animation_finished
+			firing = false
+			
+	if Input.is_action_just_pressed("hide_weapon"):
+		if !hiding and !firing and !reloading:
+			hiding = true
+			hide_animation()
+			await pistol_animation.animation_finished
+			hiding = false
+
+
+func hide_animation() -> void:
+	if !isHidden:
+		pistol_animation.play("hide")
+		pistol_animation.seek(4.3667, true)
+		hide_sound.play()
+		isHidden = true
+	else:				
+		pistol_animation.play("weild")
+		pistol_animation.seek(4.7333, true)
+		unhide_sound.play()
+		isHidden = false
 	
 func _input(event):
 	

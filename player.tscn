@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://o56swjkw2mym"]
+[gd_scene load_steps=11 format=3 uid="uid://o56swjkw2mym"]
 
 [ext_resource type="ArrayMesh" uid="uid://cp1laq3nc2ext" path="res://Models/Weapon/shotgun.obj" id="1_gais3"]
 [ext_resource type="Script" path="res://player.gd" id="1_pnj8u"]
@@ -6,6 +6,9 @@
 [ext_resource type="PackedScene" uid="uid://2wv22mx7g31k" path="res://Models/Weapon/fps_pistol_animated.tscn" id="4_sc5oy"]
 [ext_resource type="AudioStream" uid="uid://dblqxe0jkd40q" path="res://Audio/pistolfire2.wav" id="5_ve15w"]
 [ext_resource type="AudioStream" uid="uid://25mm6a7sxaub" path="res://Audio/pistolReloadB.wav" id="6_1i6uw"]
+[ext_resource type="AudioStream" uid="uid://bltk3wq1lj10f" path="res://Audio/HideDefault.wav" id="7_vu5p4"]
+[ext_resource type="AudioStream" uid="uid://bfyi8p502vlom" path="res://Audio/pistolready.wav" id="8_lpxr4"]
+[ext_resource type="AudioStream" uid="uid://cpn4hw8dru7wi" path="res://Audio/pistolReload.wav" id="9_p87lx"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_kekq6"]
 
@@ -39,5 +42,14 @@ transform = Transform3D(-0.027281, 0, -0.000296176, 0, 0.0272826, 0, 0.000296176
 [node name="ShootSound" type="AudioStreamPlayer3D" parent="."]
 stream = ExtResource("5_ve15w")
 
-[node name="ReloadSound" type="AudioStreamPlayer3D" parent="."]
+[node name="ReloadSound2" type="AudioStreamPlayer3D" parent="."]
 stream = ExtResource("6_1i6uw")
+
+[node name="HideSound" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("7_vu5p4")
+
+[node name="UnhideSound" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("8_lpxr4")
+
+[node name="ReloadSound" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("9_p87lx")
