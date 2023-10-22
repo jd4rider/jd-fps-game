@@ -1,5 +1,11 @@
 extends CharacterBody3D
 
+# stats
+var curHp : int = 10
+var maxHp : int = 10
+var ammo : int = 20
+var global_ammo : int = 60
+var score: int = 0
 
 const SPEED = 5.0
 const JUMP_VELOCITY = 4.5
@@ -29,6 +35,8 @@ var isHidden : bool = false;
 @onready var footstep_sound : AudioStreamPlayer3D = $FootstepSound
 @onready var dry_fire: AudioStreamPlayer3D = $DryFire
 @onready var melee_sound: AudioStreamPlayer3D = $MeleeSound
+@onready var muzzle: Node3D = $Camera3D/Muzzle
+@onready var bulletScene = preload("res://bullet.tscn")
 
 
 var rng = RandomNumberGenerator.new()
@@ -40,6 +48,8 @@ var meleeing : bool = false
 
 var gun_jammed : bool = false
 var gun_unjamming : bool = false
+
+var need_to_reload : bool = false
 
 
 func _ready():
@@ -107,26 +117,34 @@ func _process(delta: float) -> void:
 		elif !hiding and !firing and !reloading and !meleeing:
 			rng.randomize()
 			var randNum = rng.randi_range(0,1)
-			reloading = true
 			if gun_jammed:
 				gun_unjamming = true
 				pistol_animation.play("weild")
 				pistol_animation.seek(4.7333, true)
 				unhide_sound.play()
-				gun_jammed = false
 				isHidden = false
 				await pistol_animation.animation_finished
+				gun_jammed = false
 				gun_unjamming = false
-			elif randNum == 0:
-				pistol_animation.play("reload")
-				pistol_animation.seek(0.3, true)
-				reload_sound.play()	
-			else:
-				pistol_animation.play("reload2")
-				pistol_animation.seek(2.1667, true)
-				reload_sound2.play()
-			await pistol_animation.animation_finished
-			reloading = false
+			elif global_ammo > 1:
+				need_to_reload = false
+				reloading = true
+				if global_ammo > 20:
+					global_ammo -= 20
+					ammo += 20
+				else:
+					global_ammo -= global_ammo
+					ammo += global_ammo
+				if randNum == 0:
+					pistol_animation.play("reload")
+					pistol_animation.seek(0.3, true)
+					reload_sound.play()	
+				else:
+					pistol_animation.play("reload2")
+					pistol_animation.seek(2.1667, true)
+					reload_sound2.play()
+				await pistol_animation.animation_finished
+				reloading = false
 		isHidden = false
 	
 	if Input.is_action_just_pressed("shoot"):
@@ -134,12 +152,15 @@ func _process(delta: float) -> void:
 			hide_animation()
 		elif !hiding and !firing and !reloading and !meleeing:
 			rng.randomize()
-			var randNum = rng.randi_range(0,10)
+			var randNum = rng.randi_range(0,1000)
 			firing = true
-			if gun_jammed:
+			if ammo < 1:
 				pistol_animation.play("gun_jam")
 				dry_fire.play()
-				gun_jammed = true
+				need_to_reload = true
+			elif gun_jammed:
+				pistol_animation.play("gun_jam")
+				dry_fire.play()
 			elif randNum == 0:
 				pistol_animation.play("gun_jam")
 				dry_fire.play()
@@ -147,6 +168,7 @@ func _process(delta: float) -> void:
 			else: 
 				pistol_animation.play("shoot")
 				pistol_animation.seek(7.5, true)
+				shoot()
 				shoot_sound.play()
 			isHidden = false
 			await pistol_animation.animation_finished
@@ -187,3 +209,45 @@ func _input(event):
 	
 	if event is InputEventMouseMotion:
 		mouseDelta = event.relative
+
+func shoot():
+	var bullet = bulletScene.instantiate()
+	get_node("/root/MainScene").add_child(bullet)
+	
+	bullet.global_transform = muzzle.global_transform
+	
+	ammo -= 1
+	
+# called when an enemy damages us
+func take_damage (damage):
+	
+	curHp -= damage
+	
+	#ui.update_health_bar(curHp, maxHp)
+	
+	if curHp <= 0:
+		die()
+
+# called when our health reaches 0	
+func die ():
+	
+	get_tree().reload_current_scene()
+	
+func add_score (amount):
+	
+	score += amount
+	#ui.update_score_text(score)
+	
+func add_health (amount):
+	
+	curHp += amount
+	
+	if curHp > maxHp:
+		curHp = maxHp
+		
+	#ui.update_health_bar(curHp, maxHp)
+	
+func add_ammo (amount):
+	
+	global_ammo += amount
+	#ui.update_ammo_text(ammo)

@@ -15,6 +15,21 @@
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_kekq6"]
 
+[sub_resource type="Animation" id="Animation_e1qxx"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(2.08165e-12, 1.06614, 0.441086)]
+}
+
 [sub_resource type="Animation" id="Animation_lmhir"]
 resource_name = "head_bob"
 length = 1.00002
@@ -33,21 +48,6 @@ tracks/0/keys = {
 "values": [Vector3(2.08165e-12, 1.06614, 0.441086), Vector3(2.08165e-12, 1.35, 0.441), Vector3(2.08165e-12, 1.06614, 0.441086)]
 }
 
-[sub_resource type="Animation" id="Animation_e1qxx"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector3(2.08165e-12, 1.06614, 0.441086)]
-}
-
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_sqpq0"]
 _data = {
 "RESET": SubResource("Animation_e1qxx"),
@@ -58,7 +58,7 @@ _data = {
 script = ExtResource("1_pnj8u")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(1.46674, 0, 0, 0, 1.35639, 0, 0, 0, 2.12288, 0, -0.428111, 0)
+transform = Transform3D(1.24073, 0, 0, 0, 1.506, 0, 0, 0, 0.773284, 0, -0.428111, 0)
 shape = SubResource("CapsuleShape3D_kekq6")
 
 [node name="Camera3D" type="Camera3D" parent="."]
@@ -72,14 +72,14 @@ mesh = ExtResource("1_gais3")
 skeleton = NodePath("../..")
 
 [node name="Muzzle" type="Node3D" parent="Camera3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.232579, -0.645078, -2.7893)
+transform = Transform3D(-1, 3.48787e-16, -8.74228e-08, 3.48787e-16, 1, -3.48787e-16, 8.74228e-08, -3.48787e-16, -1, -1.12762e-09, -0.645, -2.80192)
 
 [node name="fps_pistol_animated" parent="Camera3D" instance=ExtResource("3_t5mf5")]
 transform = Transform3D(-0.027281, 0, -0.000296176, 0, 0.0272826, 0, 0.000296176, 0, -0.027281, 0.245151, -1.06614, -1.62025)
 visible = false
 
 [node name="fps_pistol_animated2" parent="Camera3D" instance=ExtResource("4_sc5oy")]
-transform = Transform3D(-0.027281, 0, -0.000296176, 0, 0.0272826, 0, 0.000296176, 0, -0.027281, 0.245151, -1.06614, -1.62025)
+transform = Transform3D(-0.027281, 0, -0.000296176, 0, 0.0272826, 0, 0.000296176, 0, -0.027281, 0.0129807, -1.06614, -1.62025)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Camera3D"]
 libraries = {
